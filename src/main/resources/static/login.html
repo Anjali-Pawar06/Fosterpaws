@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FosterPaws — Login</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: 'Segoe UI', sans-serif;
+          min-height: 100vh;
+          background: linear-gradient(135deg, #FFF8F0 0%, #FFE8D6 100%);
+          display: flex; align-items: center; justify-content: center;
+        }
+        .card {
+          background: #fff;
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+          padding: 2.5rem 2rem;
+          width: 100%; max-width: 420px;
+        }
+        .logo { text-align: center; margin-bottom: 1.5rem; }
+        .logo .paw { font-size: 2.5rem; }
+        .logo h1 { font-size: 1.6rem; color: #C95A1A; font-weight: 700; }
+        .logo p { color: #888; font-size: 0.85rem; margin-top: 4px; }
+        .tabs { display: flex; border-bottom: 2px solid #f0e6da; margin-bottom: 1.5rem; }
+        .tab {
+          flex: 1; padding: 0.6rem; text-align: center; cursor: pointer;
+          color: #aaa; font-weight: 600; transition: color 0.2s;
+        }
+        .tab.active { color: #C95A1A; border-bottom: 2px solid #C95A1A; margin-bottom: -2px; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.82rem; color: #555; margin-bottom: 4px; font-weight: 600; }
+        input, select {
+          width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #e5dbd4;
+          border-radius: 10px; font-size: 0.95rem; transition: border 0.2s;
+          outline: none; background: #fafafa;
+        }
+        input:focus, select:focus { border-color: #C95A1A; background: #fff; }
+        .btn {
+          width: 100%; padding: 0.75rem; background: #C95A1A; color: #fff;
+          border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+          cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+        }
+        .btn:hover { background: #a94515; }
+        .msg { text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #e65c00; min-height: 1.2em; }
+        .panel { display: none; } .panel.active { display: block; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">
+        <div class="paw">🐾</div>
+        <h1>FosterPaws</h1>
+        <p>Connecting pets with caring temporary homes</p>
+    </div>
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">Login</div>
+        <div class="tab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <!-- Login -->
+    <div class="panel active" id="panel-login">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="you@email.com"/>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="••••••••"/>
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+        <div class="msg" id="login-msg"></div>
+    </div>
+
+    <!-- Register -->
+    <div class="panel" id="panel-register">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="reg-name" placeholder="Your name"/>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="you@email.com"/>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="reg-password" placeholder="Choose a password"/>
+        </div>
+        <div class="form-group">
+            <label>I am a...</label>
+            <select id="reg-role">
+                <option value="pet_owner">Pet Owner (I need a foster)</option>
+                <option value="foster">Foster (I want to care for a pet)</option>
+            </select>
+        </div>
+        <button class="btn" onclick="register()">Create Account</button>
+        <div class="msg" id="reg-msg"></div>
+    </div>
+</div>
+
+<script>
+    async function login() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const msg = document.getElementById('login-msg');
+
+    if (!email || !password) {
+        msg.textContent = 'Please enter email and password.';
+        return;
+    }
+
+    try {
+        const res = await fetch('http://localhost:8080/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (res.status === 401) {
+            msg.style.color = '#e65100';
+            msg.textContent = '❌ Invalid email or password.';
+            return;
+        }
+
+        if (!res.ok) {
+            msg.textContent = 'Something went wrong. Try again.';
+            return;
+        }
+
+        const user = await res.json();
+
+        // Store user info in localStorage
+        localStorage.setItem('userId',    user.id);
+        localStorage.setItem('userName',  user.name);
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userRole',  user.role);
+
+        // Redirect based on role
+        if (user.role === 'pet_owner') {
+            window.location.href = 'dashboard.html';
+        } else if (user.role === 'foster') {
+            window.location.href = 'foster.html';
+        } else {
+            window.location.href = 'index.html'; // fallback
+        }
+
+    } catch (e) {
+        msg.textContent = 'Could not reach server. Is Spring Boot running?';
+    }
+}
+
+async function register() {
+    const name     = document.getElementById('reg-name').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const role     = document.getElementById('reg-role').value;
+    const msg      = document.getElementById('reg-msg');
+
+    if (!name || !email || !password) {
+        msg.textContent = 'Please fill in all fields.';
+        return;
+    }
+
+    try {
+        const res = await fetch('http://localhost:8080/users/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, role })
+        });
+
+        if (res.status === 409) {
+            msg.style.color = '#e65100';
+            msg.textContent = '❌ An account with this email already exists.';
+            return;
+        }
+
+        const user = await res.json();
+        if (user.id) {
+            msg.style.color = '#2e7d32';
+            msg.textContent = '✅ Account created! Please login.';
+            setTimeout(() => switchTab('login'), 1500);
+        }
+    } catch (e) {
+        msg.textContent = 'Could not reach server. Is Spring Boot running?';
+    }
+}
+    function switchTab(tab) {
+
+        // Remove active class from tabs
+        document.querySelectorAll('.tab').forEach(t =>
+            t.classList.remove('active')
+        );
+
+        // Hide all panels
+        document.querySelectorAll('.panel').forEach(p =>
+            p.classList.remove('active')
+        );
+
+        if(tab === 'login') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('panel-login').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('panel-register').classList.add('active');
+        }
+    }
+</script>
+</body>
+</html>

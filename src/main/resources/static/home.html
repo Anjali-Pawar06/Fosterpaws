@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FosterPaws - Pet Foster Care Platform</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',sans-serif;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            background:#ffffff;
+            color:#2D3748;
+        }
+
+        nav{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:20px 80px;
+            background:white;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo{
+            font-size:28px;
+            font-weight:700;
+            color:#FF6B35;
+        }
+
+        .nav-links{
+            display:flex;
+            list-style:none;
+            gap:35px;
+        }
+
+        .nav-links a{
+            text-decoration:none;
+            color:#333;
+            font-weight:500;
+        }
+
+        .nav-links a:hover{
+            color:#FF6B35;
+        }
+
+        .login-btn{
+            background:#FF6B35;
+            color:white;
+            border:none;
+            padding:12px 25px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .login-btn:hover{
+            background:#e75b28;
+        }
+
+        .hero{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:80px;
+            min-height:85vh;
+            background:linear-gradient(to right,#FFF8F0,#FFE8D6);
+        }
+
+        .hero-content{
+            width:50%;
+        }
+
+        .hero-content h1{
+            font-size:56px;
+            line-height:1.2;
+            margin-bottom:20px;
+        }
+
+        .hero-content p{
+            font-size:18px;
+            color:#555;
+            line-height:1.8;
+            margin-bottom:30px;
+        }
+
+        .hero-buttons{
+            display:flex;
+            gap:15px;
+        }
+
+        .primary-btn{
+            background:#FF6B35;
+            color:white;
+            border:none;
+            padding:15px 30px;
+            border-radius:10px;
+            font-size:16px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .secondary-btn{
+            background:white;
+            border:2px solid #FF6B35;
+            color:#FF6B35;
+            padding:15px 30px;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:16px;
+            font-weight:600;
+        }
+
+        .hero-image img{
+            width:550px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .stats{
+            display:flex;
+            justify-content:center;
+            gap:120px;
+            padding:60px;
+            background:white;
+        }
+
+        .stat{
+            text-align:center;
+        }
+
+        .stat h2{
+            color:#FF6B35;
+            font-size:42px;
+        }
+
+        .stat p{
+            margin-top:8px;
+            color:#666;
+        }
+
+        .section-title{
+            text-align:center;
+            margin-bottom:50px;
+            font-size:36px;
+        }
+
+        .features{
+            padding:80px;
+            background:#f9fafb;
+        }
+
+        .feature-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:25px;
+        }
+
+        .feature-card{
+            background:white;
+            padding:30px;
+            border-radius:15px;
+            text-align:center;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+            transition:0.3s;
+        }
+
+        .feature-card:hover{
+            transform:translateY(-8px);
+        }
+
+        .feature-card h3{
+            margin-bottom:15px;
+        }
+
+        .how-it-works{
+            padding:80px;
+        }
+
+        .steps{
+            display:flex;
+            gap:30px;
+        }
+
+        .step{
+            flex:1;
+            background:white;
+            padding:30px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+            text-align:center;
+        }
+
+        .step-number{
+            width:50px;
+            height:50px;
+            background:#FF6B35;
+            color:white;
+            border-radius:50%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            margin:0 auto 20px;
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .pets{
+            padding:80px;
+            background:#f9fafb;
+        }
+
+        .pet-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:30px;
+        }
+
+        .pet-card{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .pet-card img{
+            width:100%;
+            height:250px;
+            object-fit:cover;
+        }
+
+        .pet-card-content{
+            padding:20px;
+        }
+
+        .pet-card h3{
+            margin-bottom:10px;
+        }
+
+        .testimonials{
+            padding:80px;
+        }
+
+        .review-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:30px;
+        }
+
+        .review{
+            background:white;
+            padding:30px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .review h4{
+            margin-top:15px;
+        }
+
+        .cta{
+            text-align:center;
+            padding:100px 40px;
+            background:#FF6B35;
+            color:white;
+        }
+
+        .cta h2{
+            font-size:40px;
+            margin-bottom:20px;
+        }
+
+        .cta button{
+            background:white;
+            color:#FF6B35;
+            border:none;
+            padding:15px 35px;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        footer{
+            background:#222;
+            color:white;
+            text-align:center;
+            padding:30px;
+        }
+
+        @media(max-width:900px){
+
+            .hero{
+                flex-direction:column;
+                text-align:center;
+            }
+
+            .hero-content{
+                width:100%;
+            }
+
+            .hero-image img{
+                width:100%;
+                margin-top:30px;
+            }
+
+            .feature-grid,
+            .pet-grid,
+            .review-grid,
+            .steps{
+                grid-template-columns:1fr;
+                display:grid;
+            }
+
+            .stats{
+                flex-direction:column;
+                gap:30px;
+            }
+
+            nav{
+                padding:20px;
+            }
+
+            .nav-links{
+                display:none;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">FosterPaws</div>
+
+    <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#works">How It Works</a></li>
+        <li><a href="#pets">Success Stories</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+    </ul>
+
+    <button class="login-btn" onclick="location.href='login.html'">
+        Login
+    </button>
+</nav>
+
+<section class="hero">
+
+    <div class="hero-content">
+        <h1>Trusted Temporary Care For Your Pets</h1>
+
+        <p>
+            FosterPaws helps pet owners connect with verified foster caregivers when they need temporary support during travel, emergencies, work commitments, or relocation.
+        </p>
+
+        <div class="hero-buttons">
+            <button class="primary-btn" onclick="location.href='login.html'">
+                Get Started
+            </button>
+
+            <button class="secondary-btn" onclick="document.getElementById('works').scrollIntoView();">
+                Learn More
+            </button>
+        </div>
+
+    </div>
+
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1000" alt="Pet Care">
+    </div>
+
+</section>
+
+<section class="stats">
+
+    <div class="stat">
+        <h2>500+</h2>
+        <p>Happy Pets</p>
+    </div>
+
+    <div class="stat">
+        <h2>250+</h2>
+        <p>Verified Foster Homes</p>
+    </div>
+
+    <div class="stat">
+        <h2>95%</h2>
+        <p>Successful Matches</p>
+    </div>
+
+</section>
+
+<section class="features" id="features">
+
+    <h2 class="section-title">Why Choose FosterPaws</h2>
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <h3>Verified Caregivers</h3>
+            <p>Identity verification and profile screening for foster applicants.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Easy Matching</h3>
+            <p>Find suitable temporary homes based on requirements and availability.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Secure Profiles</h3>
+            <p>Maintain detailed pet and caregiver profiles in one place.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Community Driven</h3>
+            <p>Built for pet lovers who want to help fellow pet owners.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="how-it-works" id="works">
+
+    <h2 class="section-title">How It Works</h2>
+
+    <div class="steps">
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Create a Request</h3>
+            <p>Provide pet details, duration and special care requirements.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Receive Applications</h3>
+            <p>Interested foster caregivers apply for your request.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Select a Foster</h3>
+            <p>Choose the most suitable caregiver and confirm the arrangement.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="pets" id="pets">
+
+    <h2 class="section-title">Recent Foster Success Stories</h2>
+
+    <div class="pet-grid">
+
+        <div class="pet-card">
+            <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=800">
+            <div class="pet-card-content">
+                <h3>Golden Retriever</h3>
+                <p>Successfully fostered for one week during family travel.</p>
+            </div>
+        </div>
+
+        <div class="pet-card">
+            <img src="https://images.unsplash.com/photo-1519052537078-e6302a4968d4?w=800">
+            <div class="pet-card-content">
+                <h3>Persian Cat</h3>
+                <p>Received temporary care while owner relocated to a new city.</p>
+            </div>
+        </div>
+
+        <div class="pet-card">
+            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800">
+            <div class="pet-card-content">
+                <h3>Beagle</h3>
+                <p>Matched with an experienced foster family for ten days.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="testimonials" id="reviews">
+
+    <h2 class="section-title">What Users Say</h2>
+
+    <div class="review-grid">
+
+        <div class="review">
+            <p>
+                "Finding a trusted foster home for my dog was effortless. The platform made the entire process smooth and reassuring."
+            </p>
+            <h4>Pet Owner</h4>
+        </div>
+
+        <div class="review">
+            <p>
+                "I enjoy caring for pets and FosterPaws helped me connect with responsible pet owners in my area."
+            </p>
+            <h4>Foster Caregiver</h4>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="cta">
+
+    <h2>Ready To Find Trusted Pet Care?</h2>
+
+    <p style="margin-bottom:30px;">
+        Join FosterPaws and connect with responsible pet owners and foster caregivers.
+    </p>
+
+    <button onclick="location.href='login.html'">
+        Get Started
+    </button>
+
+</section>
+
+<footer>
+    <p>FosterPaws</p>
+    <p>Connecting Pet Owners With Trusted Foster Caregivers</p>
+    <p>support@fosterpaws.com</p>
+    <p> 2026 FosterPaws. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

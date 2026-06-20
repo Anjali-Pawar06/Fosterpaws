@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FosterPaws - Browse Pets</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Segoe UI;
+        }
+
+        body{
+            background:#FFF8F0;
+        }
+
+        nav{
+            height:75px;
+            background:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 40px;
+            box-shadow:0 2px 12px rgba(0,0,0,.08);
+        }
+
+        .logo{
+            font-size:28px;
+            font-weight:bold;
+            color:#C95A1A;
+        }
+
+        .logout{
+            padding:10px 18px;
+            background:#C95A1A;
+            border:none;
+            color:white;
+            border-radius:10px;
+            cursor:pointer;
+            width:auto;
+        }
+
+        .container{
+            width:90%;
+            margin:auto;
+            margin-top:40px;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns:
+repeat(auto-fit,minmax(340px,1fr));
+
+            gap:25px;
+        }
+
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:18px;
+            box-shadow:0 5px 18px rgba(0,0,0,.08);
+        }
+
+        .card h2{
+            color:#C95A1A;
+        }
+
+        .card p{
+            margin-top:10px;
+        }
+
+        .applyBtn{
+            margin-top:20px;
+
+            width:100%;
+
+            padding:12px;
+
+            border:none;
+
+            background:#C95A1A;
+
+            color:white;
+
+            border-radius:10px;
+
+            cursor:pointer;
+        }
+
+        .applyBtn:disabled{
+            background:#ccc;
+        }
+
+        .status{
+            margin-top:18px;
+            padding:14px;
+            border-radius:12px;
+        }
+
+        .pending{
+            background:#FFF3CD;
+        }
+
+        .accepted{
+            background:#D4EDDA;
+        }
+
+        .rejected{
+            background:#F8D7DA;
+        }
+
+        .popup{
+            display:none;
+
+            position:fixed;
+
+            top:0;
+            left:0;
+
+            width:100%;
+            height:100%;
+
+            background:rgba(0,0,0,.45);
+
+            justify-content:center;
+
+            align-items:center;
+        }
+
+        .box{
+
+            width:420px;
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:18px;
+
+        }
+
+        .box input,
+        .box textarea,
+        .box select{
+
+            width:100%;
+
+            margin-top:10px;
+
+            padding:12px;
+
+            border-radius:10px;
+
+            border:1px solid #ddd;
+
+        }
+
+        .box button{
+
+            margin-top:15px;
+
+            width:100%;
+
+            padding:12px;
+
+            border:none;
+
+            background:#C95A1A;
+
+            color:white;
+
+            border-radius:10px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        🐾 FosterPaws
+    </div>
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</nav>
+
+<div class="container">
+
+    <h1>Available Requests</h1>
+
+    <br>
+
+    <div id="requests" class="grid">
+
+        Loading...
+
+    </div>
+
+</div>
+
+<div class="popup" id="popup">
+
+    <div class="box">
+
+        <h2>Apply to Foster</h2>
+
+        <textarea
+                id="experience"
+                placeholder="Your experience">
+</textarea>
+
+        <select id="living">
+
+            <option>
+                Apartment
+            </option>
+
+            <option>
+                House
+            </option>
+
+            <option>
+                House with Garden
+            </option>
+
+        </select>
+
+        <label style="
+margin-top:12px;
+display:block;
+font-weight:600;
+">
+
+            Identity Proof
+
+        </label>
+
+        <select id="proofType">
+
+            <option value="">
+                Select Proof Type
+            </option>
+
+            <option>
+                Aadhar Card
+            </option>
+
+            <option>
+                PAN Card
+            </option>
+
+            <option>
+                Driving License
+            </option>
+
+        </select>
+
+        <input
+                type="text"
+                id="proofUrl"
+                placeholder="Paste identity proof URL"
+        />
+        <button onclick="submitApplication()">
+
+            Submit
+
+        </button>
+
+        <button
+                onclick="closePopup()"
+                style="background:#888">
+
+            Cancel
+
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+    const API="http://localhost:8080";
+
+    const fosterId=
+        localStorage.getItem("userId");
+
+    let selectedRequest=null;
+
+    async function load(){
+
+        let requests=
+            await fetch(
+                API+"/requests"
+            );
+
+        requests=
+            await requests.json();
+
+        let apps=
+            await fetch(
+                API+
+                "/applications/foster/"
+                +
+                fosterId
+            );
+
+        apps=
+            await apps.json();
+
+        const div=
+            document.getElementById(
+                "requests"
+            );
+
+        div.innerHTML="";
+
+        requests.forEach(r=>{
+
+            const app=
+                apps.find(
+                    a=>a.requestId===r.id
+                );
+
+            let html=`
+
+<div class="card">
+
+<h2>${r.petType}</h2>
+
+<p>
+Breed:
+${r.breed}
+</p>
+
+<p>
+Owner:
+${r.ownerName}
+</p>
+
+<p>
+Days:
+${r.days}
+</p>
+
+<p>
+Requirements:
+${r.requirements||"None"}
+</p>
+
+`;
+
+            if(app){
+
+                let cls="pending";
+
+                if(app.status==="ACCEPTED")
+                    cls="accepted";
+
+                if(app.status==="REJECTED")
+                    cls="rejected";
+
+                html+=`
+
+<div class="status ${cls}">
+
+<b>
+Status:
+${app.status}
+</b>
+
+`;
+
+                if(app.status==="ACCEPTED"){
+
+                    html+=`
+
+<br><br>
+
+Owner accepted your request ❤️
+
+<br><br>
+
+Contact Owner:
+
+<b>
+
+${app.ownerContact
+                    ||
+                    r.ownerPhone
+                    ||
+                    "Not available"}
+
+</b>
+
+`;
+
+                }
+
+                html+=`
+
+</div>
+
+<button
+class="applyBtn"
+disabled>
+
+Applied
+
+</button>
+
+`;
+
+            }
+
+            else{
+
+                html+=`
+
+<button
+class="applyBtn"
+
+onclick=
+"openPopup(${r.id})">
+
+Apply
+
+</button>
+
+`;
+
+            }
+
+            html+=`</div>`;
+
+            div.innerHTML+=html;
+
+        });
+
+    }
+
+    function openPopup(id){
+
+        selectedRequest=id;
+
+        document.getElementById(
+            "popup"
+        ).style.display=
+            "flex";
+
+    }
+
+    function closePopup(){
+
+        document.getElementById(
+            "popup"
+        ).style.display=
+            "none";
+
+        document.getElementById(
+            "experience"
+        ).value="";
+
+        document.getElementById(
+            "proofType"
+        ).value="";
+
+        document.getElementById(
+            "proofUrl"
+        ).value="";
+
+    }
+
+    async function submitApplication(){
+
+        const exp=
+            document.getElementById(
+                "experience"
+            ).value.trim();
+
+        const living=
+            document.getElementById(
+                "living"
+            ).value;
+
+        const proofType=
+            document.getElementById(
+                "proofType"
+            ).value;
+
+        const proofUrl=
+            document.getElementById(
+                "proofUrl"
+            ).value.trim();
+
+        if(!selectedRequest){
+
+            alert(
+                "Please select request"
+            );
+
+            return;
+
+        }
+
+        if(!exp){
+
+            alert(
+                "Enter experience"
+            );
+
+            return;
+
+        }
+
+        if(!proofType){
+
+            alert(
+                "Select identity proof"
+            );
+
+            return;
+
+        }
+
+        if(!proofUrl){
+
+            alert(
+                "Enter proof URL"
+            );
+
+            return;
+
+        }
+
+        try{
+
+            const response=
+                await fetch(
+
+                    API+
+                    "/applications",
+
+                    {
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                requestId:
+                                    Number(
+                                        selectedRequest
+                                    ),
+
+                                fosterId:
+                                    Number(
+                                        fosterId
+                                    ),
+
+                                experience:
+                                    exp+
+                                    " | Living: "+
+                                    living,
+
+                                idProofUrl:
+                                    proofType+
+                                    " | "+
+                                    proofUrl,
+
+                                status:
+                                    "PENDING"
+
+                            })
+
+                    }
+
+                );
+
+            if(!response.ok){
+
+                throw new Error();
+
+            }
+
+            alert(
+                "Application submitted"
+            );
+
+            document.getElementById(
+                "experience"
+            ).value="";
+
+            document.getElementById(
+                "proofType"
+            ).value="";
+
+            document.getElementById(
+                "proofUrl"
+            ).value="";
+
+            selectedRequest=null;
+
+            closePopup();
+
+            load();
+
+        }
+
+        catch(e){
+
+            console.log(e);
+
+            alert(
+                "Submission failed"
+
+            );
+
+        }
+
+    }
+    function logout(){
+
+        localStorage.clear();
+
+        location.href=
+            "login.html";
+
+    }
+
+    load();
+
+    setInterval(
+        load,
+        5000
+    );
+
+</script>
+
+</body>
+
+</html>

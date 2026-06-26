@@ -1,9 +1,13 @@
 package com.example.fosterpaws.controller;
 
 import com.example.fosterpaws.model.FosterApplication;
+import com.example.fosterpaws.model.Notification;
+
 import com.example.fosterpaws.repository.FosterApplicationRepository;
+import com.example.fosterpaws.repository.NotificationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,51 +15,98 @@ import java.util.List;
 @RestController
 @RequestMapping("/applications")
 @CrossOrigin
+
 public class FosterApplicationController {
+
 
     @Autowired
     private FosterApplicationRepository repo;
 
+    @Autowired
+    private NotificationRepository notificationRepo;
+
+
     @GetMapping
-    public List<FosterApplication> getAll() {
+    public List<FosterApplication> getAll(){
+
         return repo.findAll();
+
     }
+
 
     @GetMapping("/request/{requestId}")
     public List<FosterApplication> byRequest(
             @PathVariable Long requestId
     ){
-        return repo.findByRequestId(requestId);
+
+        return repo.findByRequestId(
+                requestId
+        );
+
     }
+
 
     @GetMapping("/foster/{fosterId}")
     public List<FosterApplication> byFoster(
             @PathVariable Long fosterId
     ){
-        return repo.findByFosterId(fosterId);
+
+        return repo.findByFosterId(
+                fosterId
+        );
+
     }
+
 
     @PostMapping
     public FosterApplication apply(
+
             @RequestBody FosterApplication app
+
     ){
 
-        app.setStatus("PENDING");
+        app.setStatus(
+                "PENDING"
+        );
 
-        return repo.save(app);
+        FosterApplication saved=
+                repo.save(app);
+
+        notificationRepo.save(
+
+                new Notification(
+
+                        app.getRequestId()
+                                .intValue(),
+
+                        "🐾 New foster application received"
+
+                )
+
+        );
+
+        return saved;
+
     }
 
-    // ACCEPT
+
+
     @PutMapping("/{id}/accept")
     public FosterApplication accept(
+
             @PathVariable Long id,
+
             @RequestBody FosterApplication updated
+
     ){
 
-        FosterApplication app =
-                repo.findById(id).orElseThrow();
+        FosterApplication app=
+                repo.findById(id)
+                        .orElseThrow();
 
-        app.setStatus("ACCEPTED");
+        app.setStatus(
+                "ACCEPTED"
+        );
 
         app.setOwnerContact(
                 updated.getOwnerContact()
@@ -65,21 +116,46 @@ public class FosterApplicationController {
                 updated.getOwnerMessage()
         );
 
-        return repo.save(app);
+        FosterApplication saved=
+                repo.save(app);
+
+        notificationRepo.save(
+
+                new Notification(
+
+                        app.getFosterId()
+                                .intValue(),
+
+                        "🎉 Your application was accepted"
+
+                )
+
+        );
+
+        return saved;
+
     }
 
-    // REJECT
+
+
     @PutMapping("/{id}/reject")
     public FosterApplication reject(
+
             @PathVariable Long id
+
     ){
 
-        FosterApplication app =
-                repo.findById(id).orElseThrow();
+        FosterApplication app=
+                repo.findById(id)
+                        .orElseThrow();
 
-        app.setStatus("REJECTED");
+        app.setStatus(
+                "REJECTED"
+        );
 
         return repo.save(app);
+
     }
+
 
 }

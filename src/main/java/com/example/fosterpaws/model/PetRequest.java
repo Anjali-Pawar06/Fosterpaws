@@ -8,7 +8,7 @@ public class PetRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String petImage;
     private String petType;
     private String breed;
     private int days;
@@ -35,5 +35,13 @@ public class PetRequest {
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 
     public void setStatus(String status) {
+    }
+
+    public String getPetImage() {
+        return petImage;
+    }
+
+    public void setPetImage(String petImage) {
+        this.petImage = petImage;
     }
 }

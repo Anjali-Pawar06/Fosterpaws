@@ -66,13 +66,33 @@
     </style>
 </head>
 <body>
+<!-- Only replace inside NAV -->
 <nav>
-    <div class="nav-brand">🐾 FosterPaws</div>
-    <div class="nav-links">
-        <a href="dashboard.html">My Requests</a>
-        <a href="foster.html">Browse Fosters</a>
+
+    <div class="nav-brand">
+        🐾 FosterPaws
     </div>
-    <button class="btn-logout" onclick="logout()">Logout</button>
+
+    <div style="display:flex;gap:12px;align-items:center">
+
+        <button
+                class="btn-logout"
+                onclick="showNotifications()">
+
+            🔔
+
+        </button>
+
+        <button
+                class="btn-logout"
+                onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
 </nav>
 
 <main>
@@ -97,6 +117,14 @@
             <div class="form-group">
                 <label>Breed</label>
                 <input type="text" id="breed" placeholder="e.g. Golden Retriever"/>
+            </div>
+            <div class="form-group">
+                <label>Pet Image URL</label>
+
+                <input
+                        type="text"
+                        id="petImage"
+                        placeholder="Paste pet image URL">
             </div>
             <div class="form-group">
                 <label>Days Needed</label>
@@ -141,23 +169,26 @@
         const data={
 
             ownerName:
-            document.getElementById('ownerName').value,
+            document.getElementById("ownerName").value,
 
             petType:
-            document.getElementById('petType').value,
+            document.getElementById("petType").value,
 
             breed:
-            document.getElementById('breed').value,
+            document.getElementById("breed").value,
+
+            petImage:
+            document.getElementById("petImage").value,
 
             days:
                 parseInt(
-                    document.getElementById('days').value
+                    document.getElementById("days").value
                 ),
 
             requirements:
-            document.getElementById('requirements').value,
+            document.getElementById("requirements").value,
 
-            status:'OPEN'
+            status:"OPEN"
 
         };
 
